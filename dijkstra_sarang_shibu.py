@@ -173,4 +173,41 @@ def dijkstra_algo(start, goal, canvas):
     else:
         return None
     
+def back_track(start, goal, final_list, canvas):
     
+    # Define video parameters
+    output_video = cv2.VideoWriter('Animation Video.mp4', cv2.VideoWriter_fourcc(*'XVID'), 800, (canvas.shape[1], canvas.shape[0]))
+    frames_to_skip = 10
+    frame_count = 0
+    
+    # Draw explored nodes and write to video
+    for node in final_list:
+        canvas[node[1], node[0]] = [255, 120, 200]  # Red color for explored nodes
+        if frame_count % frames_to_skip == 0:
+            output_video.write(canvas)
+        frame_count += 1
+
+    # Build backtracked path
+    backstack = [goal]
+    while backstack[-1] != start:
+        backstack.append(final_list[tuple(backstack[-1])])
+
+    # Draw start and goal nodes
+    for state in (start, goal):
+        cv2.circle(canvas, tuple(state), 3, ([0, 255, 0], [0, 0, 255])[state == goal], 3)
+
+    # Draw backtracked path and write to video
+    while backstack:
+        path_node = backstack.pop()
+        canvas[path_node[1], path_node[0]] = [0, 255, 0]  # White color for path nodes
+        if frame_count % frames_to_skip == 0:
+            output_video.write(canvas)
+        frame_count += 1
+
+    # Release video writer and display final canvas
+    output_video.release()
+    cv2.imshow("Backtracked Path", canvas)
+    cv2.waitKey(1)
+    cv2.destroyAllWindows()
+    
+

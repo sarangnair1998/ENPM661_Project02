@@ -189,7 +189,7 @@ def back_track(start, goal, final_list, canvas):
     # Backtrack from the goal to the start to find the shortest path
     # Define video parameters
 
-    output_video = cv2.VideoWriter('Animation Video.mp4', cv2.VideoWriter_fourcc(*'XVID'), 800, (canvas.shape[1], canvas.shape[0]))
+    output_video = cv2.VideoWriter('Animation Video.mp4', cv2.VideoWriter_fourcc(*'MP4V'), 800, (canvas.shape[1], canvas.shape[0]))
     frames_to_skip = 10
     frame_count = 0
     

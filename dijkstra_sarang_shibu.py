@@ -117,26 +117,22 @@ def check_obstacle_map(x, y):
 
 def check_coordinates():
     # Get valid start and goal coordinates from the user
+    while True:
 
-    start_x = int(input("Enter the X coordinate of the start position: "))
-    start_y = int(input("Enter the Y coordinate of the start position: "))
-    goal_x = int(input("Enter the X coordinate of the goal position: "))
-    goal_y = int(input("Enter the Y coordinate of the goal position: "))
+        start_x = int(input("Enter the X coordinate of the start position: "))
+        start_y = int(input("Enter the Y coordinate of the start position: "))
+        goal_x = int(input("Enter the X coordinate of the goal position: "))
+        goal_y = int(input("Enter the Y coordinate of the goal position: "))
 
-    if not (5 <= start_x <= 1195 and 5 <= start_y <= 495):
-        print("The start position is out of bounds or within the clearance area.")
-        return None
-    if not (5 <= goal_x <= 1195 and 5 <= goal_y <= 495):
-        print("The goal position is out of bounds or within the clearance area.")
-        return None
-    
-    if check_obstacle_map(start_x, start_y) or check_obstacle_map(goal_x, goal_y):
-        print("Start or goal position falls within an obstacle.")
-        return None
-    else:
-        print("Start and goal positions are not obstructed by obstacles.")
-    
-        return [start_x, start_y], [goal_x, goal_y]
+        if not (5 <= start_x <= 1195 and 5 <= start_y <= 495):
+            print("The start position is out of bounds or within the clearance area.")
+        elif not (5 <= goal_x <= 1195 and 5 <= goal_y <= 495):
+            print("The goal position is out of bounds or within the clearance area.")       
+        elif check_obstacle_map(start_x, start_y) or check_obstacle_map(goal_x, goal_y):
+            print("Start or goal position falls within an obstacle.")
+        else:
+            print("Start and goal positions are not obstructed by obstacles.")
+            return [start_x, start_y], [goal_x, goal_y]
 
 def dijkstra_algo(start, goal, canvas):
     # Implement Dijkstra's algorithm to find the shortest path

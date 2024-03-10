@@ -7,6 +7,8 @@ This Python script implements Dijkstra's algorithm for pathfinding in a 2D grid 
 
 2.Install all required dependencies - pip install numpy opencv-python
 
+List of dependencies used:-opencv(cv2), numpy, PriorityQueue, Math(pi,cos,sin)
+
 3.Execute main script - python dijkstra_sarang_shibu.py
 
 4.Provide Inputs: When prompted, enter the X and Y coordinates for the start and goal positions. Ensure that the coordinates are within the canvas boundaries and not obstructed by obstacles. Some example prompts can be found below:-

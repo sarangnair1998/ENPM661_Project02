@@ -5,6 +5,7 @@ from queue import PriorityQueue
 import numpy as np
 from math import cos, sin, pi
 
+#Action Space
 
 def action_move_up(node, canvas):
     return move_node(node, canvas, 0, -1)
@@ -32,12 +33,14 @@ def action_move_up_left(node, canvas):
 
 
 def valid(node, canvas, xdot, ydot):
+    # Check if the moved node is within canvas bounds and not in an obstacle
     x, y = node
     new_x, new_y = x + xdot, y + ydot
     return (0 <= new_x < canvas.shape[1] and 0 <= new_y < canvas.shape[0] 
             and canvas[new_y][new_x][2] < 255)
 
 def move_node(node, canvas, xdot, ydot):
+    # Move the node based on the direction
     next_node = (node[0] + xdot, node[1] + ydot)
     if valid(node, canvas, xdot, ydot):
         return True, next_node
@@ -45,6 +48,7 @@ def move_node(node, canvas, xdot, ydot):
         return False, node
     
 def draw_regular_polygon_with_clearance(canvas, color, vertex_count, radius, position, rotation=0, clearance=0,thickness = -1):
+    # Draw a regular polygon with clearance
     n = vertex_count
     r = radius + clearance 
     x, y = position
@@ -61,15 +65,16 @@ def draw_regular_polygon_with_clearance(canvas, color, vertex_count, radius, pos
 
 
 def obstacles_map(canvas):
-    
+    # Draw the obstacles on the canvas
+    # Outer Wall and its clearance visualized
     cv2.polylines(canvas, [np.array([(0, 0), (1200, 0), (1200, 500), (0, 500)])], isClosed=True, color=(0, 0, 255), thickness=5)
-    
+    #Rectangle1 and its clearance visualized
     cv2.fillPoly(canvas, pts = [np.array([(100,400), (175,400), (175,0), (100,0)])], color = (255, 0, 0))
     cv2.polylines(canvas, pts = [np.array([(100,400), (175,400), (175,0), (100,0)])],isClosed=True, color=(0, 0, 255), thickness=5)
-    
+    #Rectangle2 and its clearance visualized
     cv2.fillPoly(canvas, pts = [np.array([(275,100), (350,100), (350,500), (275,500)])], color = (255, 0, 0))
     cv2.polylines(canvas, pts = [np.array([(275,100), (350,100), (350,500), (275,500)])],isClosed=True, color=(0, 0, 255), thickness=5)
-    
+    #Hexagon and its clearance visualized
     hexagon1_center = (650, 250)
     hexagon1_radius = 150
     hexagon1_rotation = 90
@@ -79,7 +84,7 @@ def obstacles_map(canvas):
     vertices2 = draw_regular_polygon_with_clearance(canvas, (0, 0, 255), 6, hexagon1_radius, hexagon1_center, hexagon1_rotation, clearance2)
     cv2.fillPoly(canvas, pts = [np.array(vertices1)], color = (255, 0, 0))
     cv2.polylines(canvas, pts = [np.array(vertices2)],isClosed=True, color=(0, 0, 255), thickness=5)
-    
+    #BackwardsC and its clearance visualized
     cv2.fillPoly(canvas, pts = [np.array([(900,375), (1020,375), (1020,125), (900,125),(900,50),(1100,50),
                                           (1100,450),(900,450)])], color = (255, 0, 0))
     cv2.polylines(canvas, pts = [np.array([(900,375), (1020,375), (1020,125), (900,125),(900,50),(1100,50),
@@ -89,11 +94,14 @@ def obstacles_map(canvas):
 
 
 def check_obstacle_map(x, y):
+    # Check if the given coordinates are inside any obstacle
     hexagon1_center = (650, 250)
     hexagon1_radius = 150
     hexagon1_rotation = 90
     clearance = 5
+    #hexagon vertices obtained keeping in consideration the clearance
     vertices1 = draw_regular_polygon_with_clearance(canvas, (0, 0, 255), 6, hexagon1_radius, hexagon1_center, hexagon1_rotation,clearance)
+    #all the other polygons - Rect1,Rect2,BackwardsC with their clearance added to their regular dimensions
     obstacle_polygons = [
         [(95, 405), (180, 405), (180, 0), (95, 0)],
         [(270, 95), (355, 95), (355, 500), (270, 500)],
@@ -101,12 +109,15 @@ def check_obstacle_map(x, y):
         [(895, 380), (1025, 380), (1025, 120), (895, 120),
          (895, 55), (1095, 55), (1095, 445), (895, 445)]
     ]
+    #Iteratively check if coordinate in obstacle space.
     for obstacle in obstacle_polygons:
         if cv2.pointPolygonTest(np.array(obstacle), (x, y), False) >= 0:
             return True
     return False
 
-def check_coordinates():    
+def check_coordinates():
+    # Get valid start and goal coordinates from the user
+
     start_x = int(input("Enter the X coordinate of the start position: "))
     start_y = int(input("Enter the Y coordinate of the start position: "))
     goal_x = int(input("Enter the X coordinate of the goal position: "))
@@ -128,6 +139,7 @@ def check_coordinates():
         return [start_x, start_y], [goal_x, goal_y]
 
 def dijkstra_algo(start, goal, canvas):
+    # Implement Dijkstra's algorithm to find the shortest path
     explored = set()
     final_list = {}
     new_list = PriorityQueue()
@@ -174,15 +186,16 @@ def dijkstra_algo(start, goal, canvas):
         return None
     
 def back_track(start, goal, final_list, canvas):
-    
+    # Backtrack from the goal to the start to find the shortest path
     # Define video parameters
+
     output_video = cv2.VideoWriter('Animation Video.mp4', cv2.VideoWriter_fourcc(*'XVID'), 800, (canvas.shape[1], canvas.shape[0]))
     frames_to_skip = 10
     frame_count = 0
     
     # Draw explored nodes and write to video
     for node in final_list:
-        canvas[node[1], node[0]] = [255, 120, 200]  # Red color for explored nodes
+        canvas[node[1], node[0]] = [255, 120, 200]
         if frame_count % frames_to_skip == 0:
             output_video.write(canvas)
         frame_count += 1
@@ -199,7 +212,7 @@ def back_track(start, goal, final_list, canvas):
     # Draw backtracked path and write to video
     while backstack:
         path_node = backstack.pop()
-        canvas[path_node[1], path_node[0]] = [0, 255, 0]  # White color for path nodes
+        canvas[path_node[1], path_node[0]] = [0, 255, 0]
         if frame_count % frames_to_skip == 0:
             output_video.write(canvas)
         frame_count += 1
@@ -209,7 +222,10 @@ def back_track(start, goal, final_list, canvas):
     cv2.imshow("Backtracked Path", canvas)
     cv2.waitKey(1)
     cv2.destroyAllWindows()
-    
+
+
+
+#Main Script
 start_time = time.time() 
 canvas = np.ones((500, 1200, 3), dtype="uint8")
 canvas = obstacles_map(canvas)

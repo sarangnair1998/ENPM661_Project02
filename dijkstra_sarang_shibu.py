@@ -126,3 +126,51 @@ def check_coordinates():
         print("Start and goal positions are not obstructed by obstacles.")
     
         return [start_x, start_y], [goal_x, goal_y]
+
+def dijkstra_algo(start, goal, canvas):
+    explored = set()
+    final_list = {}
+    new_list = PriorityQueue()
+    new_list.put((0, start, start))  
+    goal = tuple(goal)
+    canvas = np.array(canvas)
+    
+    while not new_list.empty():
+        cost, parent_node, present_node = new_list.get()
+        
+        present_node = tuple(present_node)
+        
+        if present_node in explored:
+            continue
+        
+        explored.add(present_node)
+        
+        final_list[present_node] = parent_node
+        
+        if present_node == goal:
+            back_track_flag = True
+            print("Time to back track and find the solution")
+            break
+        
+        for flag, next_node in [
+            move_node(present_node, canvas, 0, -1),
+            move_node(present_node, canvas, 1, -1),
+            move_node(present_node, canvas, 1, 0),
+            move_node(present_node, canvas, 1, 1),
+            move_node(present_node, canvas, 0, 1),
+            move_node(present_node, canvas, -1, 1),
+            move_node(present_node, canvas, -1, 0),
+            move_node(present_node, canvas, -1, -1)]:
+            
+            if flag:
+                new_cost = cost + 1
+                
+                if next_node not in explored:
+                    new_list.put((new_cost, present_node, next_node))
+    
+    if back_track_flag:
+        back_track(start, goal, final_list, canvas)
+    else:
+        return None
+    
+    

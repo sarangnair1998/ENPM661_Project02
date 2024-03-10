@@ -34,4 +34,4 @@ Start: (950, 100), Goal: (500, 400)
 Start: (1100, 450), Goal: (200, 200)
 
 
-5.Once the algorithm finishes execution, the backtracked path will be displayed on the canvas, and a video file named sarang_project2.avi will be generated showing the exploration process and the final path.
+5.Once the algorithm finishes execution, the backtracked path will be displayed on the canvas, and a video file named Animation video.mp4 will be generated showing the exploration process and the final path.

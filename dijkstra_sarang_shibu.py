@@ -161,17 +161,20 @@ def dijkstra_algo(start, goal, canvas):
             break
         
         for flag, next_node in [
-            move_node(present_node, canvas, 0, -1),
-            move_node(present_node, canvas, 1, -1),
-            move_node(present_node, canvas, 1, 0),
-            move_node(present_node, canvas, 1, 1),
-            move_node(present_node, canvas, 0, 1),
-            move_node(present_node, canvas, -1, 1),
-            move_node(present_node, canvas, -1, 0),
-            move_node(present_node, canvas, -1, -1)]:
+            move_node(present_node, canvas, 0, -1),      # UP
+            move_node(present_node, canvas, 1, -1),      # UP-RIGHT
+            move_node(present_node, canvas, 1, 0),       # RIGHT
+            move_node(present_node, canvas, 1, 1),       # DOWN-RIGHT
+            move_node(present_node, canvas, 0, 1),       # DOWN
+            move_node(present_node, canvas, -1, 1),      # DOWN-LEFT
+            move_node(present_node, canvas, -1, 0),      # LEFT
+            move_node(present_node, canvas, -1, -1)]:    # UP-LEFT
             
             if flag:
-                new_cost = cost + 1
+                if present_node[0] != next_node[0] and present_node[1] != next_node[1]:
+                    new_cost = cost + 1.4  # Diagonal movement cost
+                else:
+                    new_cost = cost + 1.0  # Cardinal movement cost
                 
                 if next_node not in explored:
                     new_list.put((new_cost, present_node, next_node))
@@ -180,6 +183,7 @@ def dijkstra_algo(start, goal, canvas):
         back_track(start, goal, final_list, canvas)
     else:
         return None
+    
     
 def back_track(start, goal, final_list, canvas):
     # Backtrack from the goal to the start to find the shortest path

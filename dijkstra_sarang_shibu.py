@@ -210,4 +210,17 @@ def back_track(start, goal, final_list, canvas):
     cv2.waitKey(1)
     cv2.destroyAllWindows()
     
+start_time = time.time() 
+canvas = np.ones((500, 1200, 3), dtype="uint8")
+canvas = obstacles_map(canvas)
 
+coordinates = check_coordinates()
+if coordinates is not None:
+    start_position, goal_position = coordinates
+    start_position[1] = canvas.shape[0] - 1 - start_position[1]
+    goal_position[1] = canvas.shape[0] - 1 - goal_position[1]
+    dijkstra_algo(start_position, goal_position, canvas) 
+
+end_time = time.time()
+cv2.destroyAllWindows() 
+print("Total time taken to execute the code: ",end_time-start_time)
